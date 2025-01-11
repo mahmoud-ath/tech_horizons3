@@ -1,83 +1,110 @@
-        /* Styles CSS personnalisés */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
+/* Styles CSS personnalisés */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+}
 
-        header {
-            background-color: #336375;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            font-family: serif;
-        }
+header {
+    background-color: #336375;
+    color: white;
+    padding: 20px 0;
+    font-family: serif;
+    text-align: center;
+}
 
-        header h1 {
-            margin: 0;
-            font-size: 3rem;
-        }
+header h1 {
+    
+    margin: 0;
+    font-size: 3rem;
+}
 
-        nav {
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-        }
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-        nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: #336375;
-            font-size: 1.2rem;
-        }
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    font-size: 20px;
+}
 
-        nav a:hover {
-            text-decoration: underline;
-        }
+.nav-links li a {
+    text-decoration: none;
+    color: white;
+    transition: color 0.3s;
+}
 
-        .theme-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
+.nav-links li a:hover {
+    color: #000000;
+    text-decoration: underline;
+}
+.btn {
+    color: rgb(255, 255, 255);
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
 
-        .theme-card {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
+.btn:hover {
+    background-color: #008c9e;
+}
 
-        .theme-card:hover {
-            transform: translateY(-5px);
-        }
+.theme-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.themes-card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
 
-        .theme-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
+}
 
-        .theme-card h3 {
-            margin: 10px 0;
-            font-size: 1.5rem;
-        }
+.theme-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
 
-        .theme-card p {
-            padding: 0 10px 10px;
-            font-size: 1rem;
-            color: #666;
-        }
+.theme-card:hover {
+    transform: translateY(-5px);
+}
 
-        footer {
-            background-color: #336375;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-            margin-top: 20px;
-        }
+.theme-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.theme-card h3 {
+    margin: 10px 0;
+    font-size: 1.5rem;
+}
+
+.theme-card p {
+    padding: 0 10px 10px;
+    font-size: 1rem;
+    color: #666;
+}
+.about-section {
+    margin: 10px;
+}
+
+footer {
+    background-color: #336375;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 20px;
+}
