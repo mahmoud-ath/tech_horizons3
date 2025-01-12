@@ -12,4 +12,9 @@ class ThemeController extends Controller
         $themes = Theme::all();
         return view('themes', compact('themes'));
     }
+    public function show(Theme $theme)
+    {
+        $articles = $theme->articles()->get();
+        return view('themes.show', compact('theme', 'articles'));
+    }
 }
