@@ -11,7 +11,11 @@ class User extends Authenticatable
     use Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'role_id',
+        'name',
+        'user_name', 
+        'email', 
+        'password', 
+        'gender',
     ];
 
     protected $hidden = [
@@ -22,9 +26,4 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // Define the relationship with the Role model
-    public function role()
-    {
-        return $this->belongsTo(Role::class, 'role_id');
-    }
 }

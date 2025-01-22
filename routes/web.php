@@ -31,3 +31,30 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+
+
+
+
+
+
+
+Route::get('/others/auth', function () {
+    return view('/others/auth');
+});
+Route::get('/others/themes', function () {
+    return view('others/themes');
+});
+Route::get('/others/public_articles', function () {
+    return view('others/public_articles');
+});
+Route::get('/others/home', function () {
+    return view('others/home');
+});
+Route::get('/others/articles', function () {
+    return view('others/articles');
+});
+Route::get('/others/article_details', function () {
+    return view('others/article_details');
+});
