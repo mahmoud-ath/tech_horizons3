@@ -5,51 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tech Horizons - Thèmes</title>
     <link rel="stylesheet" href="{{ asset('css/themes.css') }}">
-</head>
+
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="logo">
-                <h1>Tech Horizons</h1>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#">Accueil</a></li>
-                <li><a href="#">Thèmes</a></li>
-                <li><a href="#">À propos</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="/login" class="btn">Connexion</a></li>
-            </ul>
-        </nav>
-    </header>
+        <!-- HEADER Section -->
+        <header>
+            <nav class="navbar">
+                <div class="logo">
+                    <a href="/"><img src="{{ asset('images/whaite.png') }}" alt="Logo"></a>
+                    <h1 href="/">Tech Horizons</h1>
+                </div>
+                <div class="search-bar">
+                    <input type="search" placeholder="Rechercher...">
+                    <button type="submit"><img src="{{ asset('images/icons8-search-24.png') }}" alt="Search"></button>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="/" class="more">Accueil</a></li>
+                    <li><a href="/themes" class="more">Thèmes</a></li>
+                    <li><a href="/register" class="btn">Créer un compte</a></li>
+                    <li><a href="/login" class="more">Se connecter</a></li>
+                </ul>
+            </nav>
+        </header>
 
-    
+
 
   <main>
     <section class="theme-container">
             <h2>Explorez nos thèmes</h2>
             <!-- Exemple de thème -->
-            <div class="themes-card">  
-            @foreach($themes as $theme) <!-- Opening part of foreach loop -->
-                <div class="theme-card">
-                    <img src="{{ asset($theme->imagepath) }}" alt="{{ $theme->name }}">
-                    <h3>{{ $theme->name }}</h3>
-                    <p>{{ $theme->description }}</p> 
-                </div>
-            @endforeach <!-- Closing part of foreach loop -->
-        </section>
-    </main>
+            <div class="themes-card">
+                @foreach($themes as $theme) <!-- Opening part of foreach loop -->
+                    <div class="theme-card">
+                        <img src="{{ asset($theme->imagepath) }}" alt="{{ $theme->name }}">
+                        <h3>{{ $theme->name }}</h3>
+                        <p>{{ $theme->description }}</p>
+                        <p class="article-count">Articles publiés : <span id="ai-count">0</span></p>
+                        <p class="theme-score"> <span id="ai-score"></span></p>
+                    </div>
 
-    <section id="about" class="about-section">
-        <h2>À propos de Tech Horizons</h2>
-        <p>Tech Horizons est votre guide pour comprendre les transformations technologiques majeures et leurs implications.</p>
+                @endforeach <!-- Closing part of foreach loop -->
+
+
+            </div>
     </section>
+
   </main>
 
+    <!-- FOOTER Section -->
     <footer>
-        <p>&copy; 2025 Tech Horizons. Tous droits réservés.</p>
+        <div class="footer-container">
+            <!-- Section Navigation -->
+            <div class="footer-section">
+                <h2>Tech Horizons</h2>
+                <p>Tech Horizons est votre guide pour comprendre les transformations technologiques majeures et leurs implications.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/themes">Thèmes</a></li>
+                    <li><a href="/a_propos">À propos</a></li>
+                </ul>
+            </div>
+            <!-- Section Catégories -->
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="/contact_us">Contact Us</a></li>
+                </ul>
+            </div>
+            <!-- Section Réseaux sociaux -->
+            <div class="footer-section">
+                <h4>Suivez-nous</h4>
+                <div class="social-icons">
+                    <a href="#"><img src="{{ asset('images/icons8-facebook-50.png') }}" alt="Facebook"></a>
+                    <a href="#"><img src="{{ asset('images/icons8-twitter-50.png') }}" alt="Twitter"></a>
+                    <a href="#"><img src="{{ asset('images/icons8-instagram-50.png') }}" alt="Instagram"></a>
+                    <a href="#"><img src="{{ asset('images/icons8-tiktok-50.png') }}" alt="Tiktok"></a>
+                </div>
+            </div>
+        </div>
+        <!-- Bas du footer -->
+        <div class="footer-bottom">
+            <p>© 2025 Tech Horizons. All rights reserved.</p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
     </footer>
 
-    <script src="{{ asset('js/themes.js') }}"></script>
+
 </body>
 </html>
