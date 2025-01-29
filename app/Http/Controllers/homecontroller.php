@@ -1,31 +1,33 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Models\users;
+use illuminate\support\facades\Auth;
 
-class HomeController extends Controller
+
+class homecontroller extends Controller
 {
     public function index()
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            $usertype = $user->usertype;
+        if(auth::id())
+        {
+            $usertype=Auth()->user()->usertype;
 
-            if ($usertype == 'user') {
-                return view('user');
-            } elseif ($usertype == 'moderator') {
+            if($usertype=='user')
+            {
                 return view('dashboard');
-            } elseif ($usertype == 'admin') {
-                $users = User::all();
-                return view('admin.adminhome', compact('users'));
+            }
+            if($usertype=='admin')
+            {
+                return view('admin.adminhome');
+            }
+            if($usertype=='moderator')
+            {
+                return view('dashboard');
             }
         }
-
-        return redirect('/');
     }
 }

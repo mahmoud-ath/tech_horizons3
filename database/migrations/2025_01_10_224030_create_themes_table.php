@@ -14,13 +14,11 @@ return new class extends Migration
     public function up()
     {
 
-        Schema::create('themes', function (Blueprint $table){
-            $table->id();
-            $table->string('name')->unique();
-            $table->foreignId('responsible_user_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->string('status')->default('private');
-            $table->text('description');
-            $table->string('imagepath');
+        Schema::create('themes', function (Blueprint $table){ 
+            $table->id(); 
+            $table->string('name'); 
+            $table->text('description'); 
+            $table->string('imagepath'); 
             $table->timestamps();
         });
     }

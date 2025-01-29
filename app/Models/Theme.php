@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Theme extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'description', 'imagepath','user_id','status'];
+    protected $fillable = ['name', 'description', 'imagepath'];
 }
