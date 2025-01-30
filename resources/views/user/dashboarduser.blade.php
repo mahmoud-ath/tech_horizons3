@@ -16,7 +16,7 @@
             <li><a href="{{ route('user.subscription') }}" data-section="subscription" class="menu-link">Subscription</a></li>
             <li><a href="{{ route('user.myArticle') }}" data-section="my-articles" class="menu-link">My Article</a></li>
             <li><a href="{{ route('user.browsing-history') }}" data-section="browsing-history" class="menu-link">Browsing History</a></li>
-            <li><a href="{{ route('user.browsing-history') }}" data-section="propose-article" class="menu-link">Propose Article</a></li>
+            <li><a href="{{ route('user.proposearticle') }}" data-section="propose-article" class="menu-link">Propose Article</a></li>
             <li><a href="{{ route('user.settings') }}" data-section="settings" class="menu-link">Settings</a></li>
         </ul>
     </div>
@@ -49,8 +49,7 @@
                     @foreach($recommendedArticles as $article)
                         <p>{{ $article->title }}</p>
                      @endforeach
-                 @else
-                   <p>Aucun article recommandé pour le moment.</p>
+                
                  @endif
 
                     </div>
@@ -65,9 +64,8 @@
                         @foreach($magazineIssues as $issue)
                             <p>{{ $issue->title }}</p>
                         @endforeach
-                       @else
-                           <p>Aucun numéro de magazine disponible.</p>
-                                @endif
+                       
+                        @endif
 
                         </div>
                     </div>
@@ -78,7 +76,7 @@
 
 
     </div>
-    <script src="{{ asset('js/admin.js') }}"></script>
+    <script src="{{ asset('js/user.js') }}"></script>
     <script>
         function toggleSubscription(theme) {
             fetch('/admin/toggle-subscription', {
@@ -92,6 +90,58 @@
                 // Handle the response here
             });
         }
+    
+        const articles = json.parse($recommendedArticles);
+        const userSubscriptions = json.parse($subscriptions);
+        const magazineIssues = json.parse($magazineIssues);
+
+        function displayRecommendedArticles() {
+            const recommendedArticles = articles.filter(article =>
+                article.themes.some(theme => userSubscriptions.includes(theme))
+            );
+
+            const articlesList = document.getElementById('articles-list');
+            articlesList.innerHTML = ''; // Clear existing list
+
+            recommendedArticles.forEach(article => {
+                const articleElement = document.createElement('div');
+                articleElement.classList.add('recommended-article');
+                articleElement.innerHTML = `
+                    <div>
+                        <h3>${article.title}</h3>
+                        <p><strong>Thèmes:</strong> ${article.themes.join(', ')}</p>
+                        <p><strong>Status:</strong> ${article.status}</p>
+                        <p><strong>Date:</strong> ${new Date(article.date).toLocaleDateString('fr-FR')}</p>
+                    </div>
+                    <img src="${article.img}" alt="${article.title}">
+                `;
+                articlesList.appendChild(articleElement);
+            });
+        }
+
+        function displayMagazineIssues() {
+            const issuesList = document.getElementById('issues-list');
+            issuesList.innerHTML = ''; // Clear existing list
+
+            magazineIssues.forEach(issue => {
+                const issueElement = document.createElement('div');
+                issueElement.classList.add('magazine-issue');
+                issueElement.innerHTML = `
+                    <img src="${issue.img}" alt="Magazine Issue ${issue.issueNumber}">
+                    <h3>${issue.title}</h3>
+                    <p>${issue.description}</p>
+                `;
+                issuesList.appendChild(issueElement);
+            });
+        }
+
+        function initializeDashboard() {
+            displayRecommendedArticles();
+            displayMagazineIssues();
+        }
+
+        // Initialize dashboard
+        initializeDashboard();
     </script>
 </body>
 </html>

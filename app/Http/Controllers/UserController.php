@@ -7,7 +7,7 @@ use App\Models\Issues;
 use App\Models\Subscription;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Theme;
-
+use Illuminate\Support\Facades\Log;
 class UserController extends Controller
 {
     public function dashboard()
@@ -17,11 +17,11 @@ class UserController extends Controller
     public function subscription()
     {
         // Fetch subscription data or perform any logic
-        return view('user.subscription'); // Assuming you have a `subscription.blade.php` view
+        return redirect()->route('user.subscription'); // Assuming you have a `subscription.blade.php` view
     }
 
     public function myArticles()
-    {
+    {dd('here') ;
         // Fetch articles created by the authenticated user
         $articles = Article::where('user_id', auth()->id())->get();
         return view('user.my-articles', compact('articles')); // Assuming you have a `my-articles.blade.php` view
@@ -32,7 +32,19 @@ class UserController extends Controller
         $history = History::where('user_id', auth()->id())->get();
         return view('user.browsing-history', compact('history')); // Assuming you have a `browsing-history.blade.php` view
     }
+    public function proposeArticle()
+    {  dd('here');
+        if (Auth::check()) {
+            $user = Auth::user();
 
+            // Fetch data required for the propose-article page
+            $themes = Theme::all(); // Assuming you have a Theme model to fetch themes
+
+            return view('user.proposearticle', compact('user', 'themes'));
+        }
+
+        return redirect('/');
+    }
     public function settings()
     {
         // Your logic to retrieve and display user settings
@@ -46,19 +58,32 @@ class UserController extends Controller
  }
     public function index()
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            if (!$user) return redirect('/');
+        // Get authenticated user
+        $user = Auth::user();
+        
+        // Get recommended articles based on user subscriptions
+        $recommendedArticles = Article::whereHas('themes', function($query) use ($user) {
+            $query->whereIn('theme_id', $user->subscriptions->pluck('theme_id'));
+        })
+        ->where('status', 'Published')
+        ->latest()
+        ->take(5)
+        ->get();
 
-            $recommendedArticles = Article::where('recommended', true)->get();
-            $magazineIssues = Issues::all();
-            $subscriptions = Subscription::where('user_id', $user->id)->get();
+        // Get magazine issues
+        $magazineIssues = Issues::where('status', 'Public')
+            ->latest()
+            ->take(5)
+            ->get();
 
-            return view('user.dashboarduser', compact('user', 'recommendedArticles', 'magazineIssues', 'subscriptions'));
-        }
+        // Get user subscriptions
+        $subscriptions = $user->subscriptions->pluck('theme_id');
+        dd($magazineIssues);
 
-        return redirect('/');
+        return view('user.dashboard', compact('user', 'recommendedArticles', 'magazineIssues', 'subscriptions'));
     }
+
+       
     public function showSubscriptions()
     {
         $themes = Theme::all(); // Récupère tous les thèmes
@@ -78,12 +103,6 @@ class UserController extends Controller
 
         return response()->json(['status' => 'success']);
     }
-    public function dashboard1() {
-        $user = Auth::user();
-        $recommendedArticles = Article::where('category', $user->favorite_category)->get(); // Exemple de récupération
-        $magazineIssues = Issues::all();
-        $subscriptions = Subscription::where('user_id', $user->id)->get();
-        return view('user.dashboarduser', compact('user', 'recommendedArticles','magazineIssues','subscriptions'));
-    }
+   
 
 }

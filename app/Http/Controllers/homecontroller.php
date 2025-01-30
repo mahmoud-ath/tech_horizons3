@@ -16,7 +16,7 @@ class HomeController extends Controller
             if ($usertype == 'user') {
                 return redirect()->route('user.dashboarduser'); // Ensure this view exists
             } elseif ($usertype == 'moderator') {
-                return view('dashboard'); // Ensure this view exists
+                return redirect()->route('moderatorhome'); // Ensure this view exists
             } elseif ($usertype == 'admin') {
                 return redirect()->route('adminhome'); // Redirect to the adminhome route
             }

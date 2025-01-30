@@ -16,8 +16,10 @@ class Article extends Model
         'theme_id',
         'published_date',
         'status',
+        'issue_id',
         'content',
         'imagepath',
+        'recommended',
     ];
 
     public function theme()
@@ -30,5 +32,11 @@ class Article extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function issue()
+    {
+    return $this->belongsTo(Issue::class, 'issue_id');
+    }
+
 
 }
+

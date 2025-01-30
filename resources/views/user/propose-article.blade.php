@@ -16,60 +16,45 @@
             <li><a href="{{ route('user.subscription') }}" data-section="subscription" class="menu-link">Subscription</a></li>
             <li><a href="{{ route('user.myArticle') }}" data-section="my-articles" class="menu-link">My Article</a></li>
             <li><a href="{{ route('user.browsing-history') }}" data-section="browsing-history" class="menu-link">Browsing History</a></li>
-            <li><a href="{{ route('user.propose-article') }}" data-section="propose-article" class="menu-link">Propose Article</a></li>
+            <li><a href="{{ route('user.proposearticle') }}" data-section="propose-article" class="menu-link">Propose Article</a></li>
             <li><a href="{{ route('user.settings') }}" data-section="settings" class="menu-link">Settings</a></li>
         </ul>
     </div>
 
-    <!-- Main Content Area -->
-    <div class="main-content">
-        <div class="header-info">
-            <span>Welcome back, @if(isset($user))
-            <span id="admin-username" style="font-weight: 900;">{{ Auth::user()->username ?? 'Guest' }}</span>
-@else
-    <span id="admin-username" style="font-weight: 900;">{{ Auth::user()->name }}</span>
-@endif </span>
-<button id="theme-btn-header" action="{{ route('themes.index') }}" >Themes</button>
-            <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                @csrf
-                <button type="submit" id="logout-btn">Logout</button>
-            </form>
-        </div>
+    <section id="propose-article">
+                <h1>Propose un Article</h1>
+                <form id="article-form" method="POST" action="{{ url('/submit-article') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="article-title">Titre de l'article</label>
+                        <input type="text" id="article-title" name="title" placeholder="Titre de l'article" required>
+                    </div>
 
-        <section id="propose-article">
-            <h1>Propose un Article</h1>
-            <form id="article-form">
-                <div class="form-group">
-                    <label for="article-title">Titre de l'article</label>
-                    <input type="text" id="article-title" name="article-title" placeholder="Titre de l'article" required>
-                </div>
+                    <div class="form-group">
+                        <label for="article-themes">Thèmes de l'article</label>
+                        <select id="article-themes" name="theme_id" multiple required>
+                            @foreach($themes as $theme)
+                                <option value="{{ $theme->id }}">{{ $theme->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <div class="form-group">
-                    <label for="article-themes">Thèmes de l'article</label>
-                    <select id="article-themes" name="article-themes" multiple required>
-                        <option value="theme1">Thème 1</option>
-                        <option value="theme2">Thème 2</option>
-                        <option value="theme3">Thème 3</option>
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label for="article-cover">Image de couverture</label>
+                        <input type="file" id="article-cover" name="cover_image" accept="image/*" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="article-cover">Image de couverture</label>
-                    <input type="file" id="article-cover" name="article-cover" accept="image/*" required>
-                </div>
+                    <div class="form-group">
+                        <label for="article-description">Description de l'article</label>
+                        <textarea id="article-description" name="description" rows="4" placeholder="Description de l'article" required></textarea>
+                    </div>
 
-                <div class="form-group">
-                    <label for="article-description">Description de l'article</label>
-                    <textarea id="article-description" name="article-description" rows="4" placeholder="Description de l'article" required></textarea>
-                </div>
-
-                <button type="submit" id="submit-article-btn">Proposer l'article</button>
-            </form>
-        </section>
-
+                    <button type="submit" id="submit-article-btn">Proposer l'article</button>
+                </form>
+            </section>
 
     </div>
-    <script src="{{ asset('js/admin.js') }}"></script>
+    <script src="{{ asset('js/user.js') }}"></script>
     <script>
         function toggleSubscription(theme) {
             fetch('/admin/toggle-subscription', {

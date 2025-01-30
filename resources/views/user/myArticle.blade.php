@@ -16,7 +16,7 @@
             <li><a href="{{ route('user.subscription') }}" data-section="subscription" class="menu-link">Subscription</a></li>
             <li><a href="{{ route('user.myArticle') }}" data-section="my-articles" class="menu-link">My Article</a></li>
             <li><a href="{{ route('user.browsing-history') }}" data-section="browsing-history" class="menu-link">Browsing History</a></li>
-            <li><a href="{{ route('user.browsing-history') }}" data-section="propose-article" class="menu-link">Propose Article</a></li>
+            <li><a href="{{ route('user.proposearticle') }}" data-section="propose-article" class="menu-link">Propose Article</a></li>
             <li><a href="{{ route('user.settings') }}" data-section="settings" class="menu-link">Settings</a></li>
         </ul>
     </div>
@@ -56,7 +56,7 @@
 
 
     </div>
-    <script src="{{ asset('js/admin.js') }}"></script>
+    <script src="{{ asset('js/user.js') }}"></script>
     <script>
         function toggleSubscription(theme) {
             fetch('/admin/toggle-subscription', {

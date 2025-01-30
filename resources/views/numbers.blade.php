@@ -30,29 +30,32 @@
         </header>
 
     <main>
-        <h2>Annonces des Articles Publiés</h2>
+        <h2>Annonces des Articles de numero Publiés</h2>
         <p class="inf">Découvrez les derniers articles publiés sur Tech Horizons</p>
-        <section id="articles">
-            @foreach ($articles as $article)
-                <div class="article-item">
-                    <div class="article-container">
-                        <div class="article-content">
-                            <h3 class="article-title"><a href="{{ url('/themes/' . $themeId . '/articles/' . $article->id) }}">{{ $article->title }}</a></h3>
-                            <p class="article-meta">Publié le {{ \Carbon\Carbon::parse($article->published_date)->format('d/m/Y') }} | Par {{ $article->user->name }}</p>
-                            <p>{{ Str::limit($article->content, 150) }}</p>
-                            <p>Vues : {{ $article->views }}</p>
-                            <a href="{{ url('/themes/' . $themeId . '/articles/' . $article->id) }}" class="read-more">Lire plus</a>
-                            <a href="{{ url('/themes/' . $themeId . '/articles/' . $article->id) }}" class="share">Partager</a>
-                        </div>
-                        <div class="article-image">
-                            <a href="{{ url('/themes/' . $themeId . '/articles/' . $article->id) }}">
-                            <img src="{{ asset($article->imagepath) }}" alt="Image de l'article" class="article-image"  >
-                            </a>
-                        </div>
-                    </div>
+       <!-- numbers.blade.php -->
+<section id="articles">
+    @foreach ($articles as $article)
+        <div class="article-item">
+            <div class="article-container">
+                <div class="article-content">
+                    <h3 class="article-title"><a href="{{ url('numbers/' . $issue->id . '/' . $article->id) }}">{{ $article->title }}</a></h3>
+                    <p class="article-meta">Publié le {{ \Carbon\Carbon::parse($article->published_date)->format('d/m/Y') }} | Par {{ $article->user->name }}</p>
+                    <p>{{ Str::limit($article->content, 150) }}</p>
+                    <p>Vues : {{ $article->views }}</p>
+                    <a href="{{ url('numbers/' . $issue->id . '/' . $article->id)}}" class="read-more">Lire plus</a>
+                    <a href="{{ url('numbers/' . $issue->id . '/' . $article->id) }}" class="share">Partager</a>
                 </div>
-            @endforeach
-        </section>
+                <div class="article-image">
+                    <a href="{{ url('numbers/' . $issue->id . '/' . $article->id) }}">
+                        <img src="{{ asset($article->imagepath) }}" alt="Image de l'article" class="article-image">
+                    </a>
+                </div>
+            </div>
+        </div>
+    @endforeach
+</section>
+
+
     </main>
  <!-- FOOTER Section -->
  <footer>

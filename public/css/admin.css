@@ -220,9 +220,7 @@ body {
 }
 
 /* Hide buttons based on status */
-.hidden {
-  display: none;
-}
+
 /* Create Article Form Styles */
 #create-article-form {
   background-color: white;
@@ -375,7 +373,7 @@ body {
 }
 
 .modal.hidden {
-  display: none;
+  display: block;
 }
 
 .modal-content {

@@ -29,8 +29,12 @@
         <div>
             <div class="header-info">
                 <span>Welcome back <span id="admin-username" style="font-weight: 900;">{{ Auth::user()->name }}</span></span>
+                <a href="/">
                 <button id="theme-btn-header" action="{{ route('/.index') }}" >back home</button>
+                </a>
+                <a href="/themes">
                 <button id="theme-btn-header" action="{{ route('themes.index') }}" >Themes</button>
+                </a>
                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
                     @csrf
                     <button type="submit" id="logout-btn">Logout</button>
@@ -47,11 +51,11 @@
                     <div class="stat-content">
                         <div class="stat-item">
                             <span>Total Subscribers</span>
-                            <span id="total-subscribers">50</span>
+                            <span id="total-subscribers">{{ $totalSubscribers }}</span>
                         </div>
                         <div class="stat-item">
                             <span>Active Subscribers</span>
-                            <span id="active-subscribers">50</span>
+                            <span id="active-subscribers">{{ $activeSubscribers }}</span>
                         </div>
                     </div>
                 </div>
@@ -61,11 +65,11 @@
                     <div class="stat-content">
                         <div class="stat-item">
                             <span>Total Themes</span>
-                            <span id="total-themes">90</span>
+                            <span id="total-themes">{{ $totalThemes }}</span>
                         </div>
                         <div class="stat-item">
                             <span>Active Themes</span>
-                            <span id="active-responsible-themes">80</span>
+                            <span id="active-responsible-themes">{{ $activeThemes }}</span>
                         </div>
                     </div>
                 </div>
@@ -75,11 +79,11 @@
                     <div class="stat-content">
                         <div class="stat-item">
                             <span>Total Numbers</span>
-                            <span id="total-numbers">00</span>
+                            <span id="total-numbers">{{ $totalNumbers }}</span>
                         </div>
                         <div class="stat-item">
                             <span>Published Numbers</span>
-                            <span id="published-numbers">00</span>
+                            <span id="published-numbers">{{ $publishedNumbers }}</span>
                         </div>
                     </div>
                 </div>
@@ -89,20 +93,21 @@
                     <div class="stat-content">
                         <div class="stat-item">
                             <span>Total Articles</span>
-                            <span id="total-articles">00</span>
+                            <span id="total-articles">{{ $totalArticles }}</span>
                         </div>
                         <div class="stat-item">
                             <span>Published Articles</span>
-                            <span id="published-articles">00</span>
+                            <span id="published-articles">{{ $publishedArticles }}</span>
                         </div>
                         <div class="stat-item">
                             <span>Pending Articles</span>
-                            <span id="pending-articles">00</span>
+                            <span id="pending-articles">{{ $pendingArticles }}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
 
         <!-- Manage Articles Section -->
 
@@ -154,40 +159,42 @@
         </section>
 
         <!-- Create Article Section -->
-        <section id="publication">
-            <h2>Create Article</h2>
-            <form id="create-article-form" enctype="multipart/form-data">
-                @csrf
-                <div class="form-group">
-                    <label for="article-title">Title:</label>
-                    <input type="text" id="article-title" name="title" placeholder="Enter the article title" required />
-                </div>
-                <div class="form-group">
-                    <label for="article-theme">Theme:</label>
-                    <select id="article-theme" name="theme" required>
-                        <option value="1">Intelligence Artificielle</option>
-                        <option value="2">Internet des Objets</option>
-                        <option value="3">Cybersécurité</option>
-                        <option value="4">Réalité Virtuelle</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="article-status">Status:</label>
-                    <select id="article-status" name="status" required>
-                        <option value="Published">Published</option>
-                        <option value="Pending">Pending</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="article-cover">Cover Image:</label>
-                    <input type="file" id="article-cover" name="cover_image" accept="image/*" required />
-                </div>
-                <div class="form-group">
-                    <label for="article-content">Content:</label>
-                    <textarea id="article-content" name="content" placeholder="Enter the article content" rows="6" required></textarea>
-                </div>
-                <button type="submit" id="create-article-btn">Create Article</button>
-            </form>
+
+<section id="publication">
+    <h2>Create Article</h2>
+    <form id="create-article-form" action="{{ route('adminhome') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="form-group">
+            <label for="article-title">Title:</label>
+            <input type="text" id="article-title" name="title" placeholder="Enter the article title" required />
+        </div>
+        <div class="form-group">
+            <label for="article-theme">Theme:</label>
+            <select id="article-theme" name="theme" required>
+                <option value="1">Intelligence Artificielle</option>
+                <option value="2">Internet des Objets</option>
+                <option value="3">Cybersécurité</option>
+                <option value="4">Réalité Virtuelle</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="article-status">Status:</label>
+            <select id="article-status" name="status" required>
+                <option value="Published">Published</option>
+                <option value="Pending">Pending</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="article-cover">Cover Image:</label>
+            <input type="file" id="article-cover" name="cover_image" accept="image/*" required />
+        </div>
+        <div class="form-group">
+            <label for="article-content">Content:</label>
+            <textarea id="article-content" name="content" placeholder="Enter the article content" rows="6" required></textarea>
+        </div>
+        <button type="submit" id="create-article-btn">Create Article</button>
+    </form>
+</section>
         </section>
 
 
@@ -285,42 +292,44 @@
                 </tbody>
             </table>
 
-          <!-- Add/Edit User Modal -->
-          <div class="modal hidden" id="user-modal">
-            <div class="modal-content">
-                <h3 id="modal-title">Add User</h3>
-                <form id="user-form" method="POST" action="{{ route('adminhome') }}">
-                    @csrf
-                    <input type="hidden" id="user-id" name="id">
-                    <div class="form-group">
-                        <label for="user-name">Name:</label>
-                        <input type="text" id="user-name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="user-email">Email:</label>
-                        <input type="email" id="user-email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="user-role">Role:</label>
-                        <select id="user-role" name="usertype" required>
-                            <option value="admin">Admin</option>
-                            <option value="user">User</option>
-                            <option value="responsible-themes">Responsible Themes</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="user-status">Status:</label>
-                        <select id="user-status" name="status" required>
-                            <option value="Active">Active</option>
-                            <option value="Blocked">Blocked</option>
-                        </select>
-                    </div>
-                    <button type="submit">Save</button>
-                    <button type="button" id="close-modal-btn">Cancel</button>
-                </form>
+            <!-- Add/Edit User Modal -->
+            <div class="modal hidden" id="user-modal">
+                <div class="modal-content">
+                    <h3 id="modal-title">Add User</h3>
+                    <form id="user-form" method="POST" action="{{ route('adminhome') }}">
+                        @csrf
+                        <input type="hidden" id="user-id" name="id">
+                        <div class="form-group">
+                            <label for="user-name">Name:</label>
+                            <input type="text" id="user-name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-email">Email:</label>
+                            <input type="email" id="user-email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-role">Role:</label>
+                            <select id="user-role" name="usertype" required>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                                <option value="responsible-themes">Responsible Themes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-status">Status:</label>
+                            <select id="user-status" name="status" required>
+                                <option value="Active">Active</option>
+                                <option value="Blocked">Blocked</option>
+                            </select>
+                        </div>
+                        <button type="submit">Save</button>
+                        <button type="button" id="close-modal-btn">Cancel</button>
+                    </form>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+
 
     <!-- Manage Themes Section -->
     <section id="manage-responsible-themes">
@@ -364,33 +373,48 @@
     </section>
 
     <!-- Manage Numbers Section -->
-    <section id="manage-numbers">
-        <h2>Manage Numbers</h2>
-        <div class="numbers-controls">
-            <label for="number-status-filter">Filter by Status:</label>
-            <select id="number-status-filter" name="status">
+    <section id="manage-issues">
+        <h2>Manage Issues</h2>
+        <div class="issues-controls">
+            <label for="issue-status-filter">Filter by Status:</label>
+            <select id="issue-status-filter" name="status">
                 <option value="all">All Statuses</option>
-                <option value="Public">Public</option>
-                <option value="Private">Private</option>
+                <option value="Open">Open</option>
+                <option value="Closed">Closed</option>
             </select>
-            <button id="add-number-btn">Add Number</button>
+            <button id="add-issue-btn">Add Issue</button>
         </div>
 
-        <table class="numbers-table">
+        <table class="issues-table">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Title</th>
-                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Image</th>
+                    <th>Publication Date</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Numbers will be dynamically inserted here by JavaScript -->
+                @foreach($issues as $issue)
+                    <tr>
+                        <td>{{ $issue->id }}</td>
+                        <td>{{ $issue->name }}</td>
+                        <td><img src="{{ asset($issue->imagepath) }}" alt="{{ $issue->name }}" width="50"></td>
+                        <td>{{ $issue->publication_date }}</td>
+                        <td>{{ $issue->status }}</td>
+                        <td class="actions">
+                            <button class="open-btn" data-id="{{ $issue->id }}">Reopen</button>
+                            <button class="close-btn" data-id="{{ $issue->id }}">Close</button>
+                            <button class="remove-btn" data-id="{{ $issue->id }}">Remove</button>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </section>
+
 
     <!-- Settings Section -->
 

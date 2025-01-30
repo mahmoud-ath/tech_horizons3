@@ -395,9 +395,7 @@ input, select {
   }
 
   /* Section visibility */
-  section {
-    display: none;
-  }
+  
 
   section.active {
     display: block;

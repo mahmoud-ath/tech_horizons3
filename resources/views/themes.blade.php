@@ -30,27 +30,25 @@
 
 
 
-  <main>
-    <section class="theme-container">
-            <h2>Explorez nos thèmes</h2>
-            <!-- Exemple de thème -->
-            <div class="themes-card">
-                @foreach($themes as $theme) <!-- Opening part of foreach loop -->
-                    <div class="theme-card">
-                        <img src="{{ asset($theme->imagepath) }}" alt="{{ $theme->name }}">
-                        <h3>{{ $theme->name }}</h3>
-                        <p>{{ $theme->description }}</p>
-                        <p class="article-count">Articles publiés : <span id="ai-count">0</span></p>
-                        <p class="theme-score"> <span id="ai-score"></span></p>
-                    </div>
+        <main>
+            <section class="theme-container">
+                <h2>Explorez nos thèmes</h2>
+                <div class="themes-card">
+                    @foreach($themes as $theme)
+                        <a href="{{ url('themes/' . $theme->id) }}" class="theme-card-link">
+                            <div class="theme-card">
+                                <img src="{{ asset($theme->imagepath) }}" alt="{{ $theme->name }}">
+                                <h3>{{ $theme->name }}</h3>
+                                <p>{{ $theme->description }}</p>
+                                <p class="article-count">Articles publiés : <span id="ai-count">0</span></p>
+                                <p class="theme-score"> <span id="ai-score"></span></p>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+        </main>
 
-                @endforeach <!-- Closing part of foreach loop -->
-
-
-            </div>
-    </section>
-
-  </main>
 
     <!-- FOOTER Section -->
     <footer>

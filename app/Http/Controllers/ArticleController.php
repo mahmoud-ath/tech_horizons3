@@ -20,4 +20,12 @@ class ArticleController extends Controller
 
         return view('article', compact('article', 'themeId'));
     }
+    public function showArticlesByIssue($issue_id)
+    {
+        $articles = Article::with('user')
+            ->where('issue_id', $issue_id)
+            ->get();
+
+        return view('numbers', compact('articles', 'issue_id'));
+    }
 }

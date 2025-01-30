@@ -10,7 +10,7 @@ use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\AdminUserController;
-
+use App\Http\Controllers\ResponsableDashboardController;
 
 
 /*
@@ -43,6 +43,11 @@ Route::get('/contact_us', function () {
 });
 
 
+
+Route::get('/numbers/{issue_id}', [IssueController::class, 'showArticlesByIssue'])->name('issue.articles')->middleware('auth.custom');
+Route::get('/numbers/{issue_id}/{article_id}', [IssueController::class, 'showArticle'])->name('issue.article')->middleware('auth.custom');
+
+
 // Route to display articles based on theme ID
 Route::get('/themes/{themeId}', [ArticleController::class, 'index'])->middleware('auth.custom');
 
@@ -65,49 +70,55 @@ require __DIR__.'/auth.php';
 
 // Admin routes (restricted to admin users)
 
+Route::middleware(['auth', 'moderator'])->group(function () {
+    Route::match(['get', 'post'], '/respo/moderatorhome', [ResponsableDashboardController::class, 'showDashboard'])->name('moderatorhome');
+});
 //Route::get('/', [HomeController::class, 'index'])->name('home');
 
+
+
 Route::middleware(['auth', 'admin'])->group(function () {
-
     Route::match(['get', 'post'], '/admin/adminhome', [AdminDashboardController::class, 'admin'])->name('adminhome');
-    Route::post('/admin/users/toggle/{id}', [AdminDashboardController::class, 'toggleUserStatus'])->name('admin.users.toggle');
-    Route::delete('/admin/users/delete/{id}', [AdminDashboardController::class, 'deleteUser'])->name('admin.users.delete');
+    Route::post('/api/users', [AdminDashboardController::class, 'admin']);
+    Route::put('/api/users/{id}', [AdminDashboardController::class, 'updateUser']);
+    Route::post('/api/users/{id}/toggle-block', [AdminDashboardController::class, 'toggleUserStatus'])->name('admin.users.toggle');
+    Route::delete('/api/users/{id}', [AdminDashboardController::class, 'deleteUser'])->name('admin.users.delete');
 
+    // Theme management routes
+    Route::post('/api/themes', [AdminDashboardController::class, 'storeTheme']);
+    Route::put('/api/themes/{id}', [AdminDashboardController::class, 'updateTheme']);
+    Route::delete('/api/themes/{id}', [AdminDashboardController::class, 'deleteTheme']);
 
+    // Issues management routes
+    Route::get('/api/issues', [AdminDashboardController::class, 'getIssues']);
+    Route::post('/api/issues', [AdminDashboardController::class, 'storeIssue']);
+    Route::put('/api/issues/{id}/status', [AdminDashboardController::class, 'updateIssueStatus']);
+    Route::delete('/api/issues/{id}', [AdminDashboardController::class, 'deleteIssue']);
 });
+
+
+
+
+
+
+
 Route::get('/user/dashboarduser', [UserController::class, 'dashboard'])->name('user.dashboarduser');
 Route::get('/user/subscription', [UserController::class, 'subscription'])->name('user.subscription');
 Route::get('/user/my-articles', [UserController::class, 'myArticles'])->name('user.myArticle');
 Route::get('/user/browsing-history', [UserController::class, 'browsingHistory'])->name('user.browsing-history');
 Route::get('/user/settings', [UserController::class, 'settings'])->name('user.settings');
-Route::get('/user/settings', [UserController::class, 'settings'])->name('user.settings');
+Route::get('/user/proposearticle', [UserController::class, 'proposeArticle'])->name('user.proposearticle');
 
 // Other routes...
 
-
-
-
-
-
-Route::get('/others/auth', function () {
-    return view('/others/auth');
-});
-Route::get('/others/themes', function () {
-    return view('others/themes');
-});
-Route::get('/others/public_articles', function () {
-    return view('others/public_articles');
-});
-Route::get('/others/home', function () {
-    return view('others/home');
-});
-Route::get('/others/articles', function () {
-    return view('others/articles');
-});
-Route::get('/others/article_details', function () {
-    return view('others/article_details');
-});
 Route::get('/user/dashboard', [UserController::class, 'index'])->middleware('auth');
 Route::get('/dashboard', [UserController::class, 'dashboard'])->middleware('auth');
 Route::post('/toggle-subscription', [UserController::class, 'toggleSubscription']);
-Route::get('/subscriptions', [UserController::class, 'showSubscriptions']);
+
+
+
+
+
+
+
+

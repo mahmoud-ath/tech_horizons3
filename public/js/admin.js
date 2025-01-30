@@ -1,16 +1,7 @@
 // Global state management
 const state = {
-    statistics: {
-      totalSubscribers: 1500,
-      activeSubscribers: 1200,
-      totalThemes: 5,
-      activeManagers: 4,
-      totalNumbers: 10,
-      publishedNumbers: 8,
-      totalArticles: 50,
-      publishedArticles: 40,
-      pendingArticles: 10,
-    },
+     users: [],
+
     currentUser: {
       name: 'Admin',
       role: 'admin',
@@ -53,9 +44,9 @@ const state = {
     userRoleInput: document.getElementById('user-role'),
     themesTableBody: document.querySelector('.themes-table tbody'),
     themeStatusFilter: document.getElementById('theme-status-filter'),
-    numbersTableBody: document.querySelector('.numbers-table tbody'),
-    numberStatusFilter: document.getElementById('number-status-filter'),
-    addNumberBtn: document.getElementById('add-number-btn'),
+    issuesTableBody: document.querySelector('.issues-table tbody'),
+    issuestatusFilter: document.getElementById('issue-status-filter'),
+    addissuesBtn: document.getElementById('add-issue-btn'),
   };
 
   // Navigation Handler
@@ -165,7 +156,6 @@ window.addEventListener('hashchange', handleNavigation);
       renderThemes();
     }
   }
-
   // Render Articles in Table
   function renderArticles() {
     const themeFilter = elements.themeFilter.value;
@@ -252,31 +242,42 @@ window.addEventListener('hashchange', handleNavigation);
   }
 
   // Render Users in Table
+ // State
+
+
+  // Fetch and Render Users in Table
+  async function fetchUsers() {
+    const response = await fetch('/api/users'); // Adjust the API endpoint as needed
+    const users = await response.json();
+    state.users = users;
+    renderUsers();
+  }
+
+  // Render Users in Table
   function renderUsers() {
-    const roleFilter = elements.roleFilter.value;
+    const roleFilter = document.getElementById('role-filter').value;
+    const usersTableBody = document.querySelector('.users-table tbody');
 
     const filteredUsers = state.users.filter((user) => {
-      return roleFilter === 'all' || user.role === roleFilter;
+      return roleFilter === 'all' || user.usertype === roleFilter;
     });
 
-    elements.usersTableBody.innerHTML = '';
+    usersTableBody.innerHTML = '';
     filteredUsers.forEach((user) => {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${user.id}</td>
         <td>${user.name}</td>
         <td>${user.email}</td>
-        <td>${user.role}</td>
-        <td>${user.status}</td>
+        <td>${user.usertype}</td>
+        <td>${user.email_verified_at ? 'Active' : 'Blocked'}</td>
         <td class="actions">
           <button class="edit-btn" data-id="${user.id}">Edit</button>
-          <button class="block-btn" data-id="${user.id}">${user.status === 'Active' ? 'Block' : 'Unblock'}</button>
+          <button class="block-btn" data-id="${user.id}">${user.email_verified_at ? 'Block' : 'Unblock'}</button>
           <button class="delete-btn" data-id="${user.id}">Delete</button>
         </td>
       `;
-      elements.usersTableBody.appendChild(row);
-      elements.roleFilter?.addEventListener('change', renderUsers);
-
+      usersTableBody.appendChild(row);
     });
 
     addUserActions();
@@ -292,31 +293,36 @@ window.addEventListener('hashchange', handleNavigation);
     });
 
     document.querySelectorAll('.block-btn').forEach((button) => {
-      button.addEventListener('click', () => {
+      button.addEventListener('click', async () => {
         const userId = parseInt(button.dataset.id, 10);
-        toggleBlockUser(userId);
+        await toggleBlockUser(userId);
+        fetchUsers();
       });
     });
 
     document.querySelectorAll('.delete-btn').forEach((button) => {
-      button.addEventListener('click', () => {
+      button.addEventListener('click', async () => {
         const userId = parseInt(button.dataset.id, 10);
-        deleteUser(userId);
+        await deleteUser(userId);
+        fetchUsers();
       });
     });
   }
 
   // Open Modal
   function openModal(isEdit = false, user = null) {
-    elements.userModal.classList.remove('hidden');
-    elements.userForm.reset();
+    const userModal = document.getElementById('user-modal');
+    const userForm = document.getElementById('user-form');
+    userModal.classList.remove('hidden');
+    userForm.reset();
 
     if (isEdit && user) {
       document.getElementById('modal-title').textContent = 'Edit User';
-      elements.userIdInput.value = user.id;
-      elements.userNameInput.value = user.name;
-      elements.userEmailInput.value = user.email;
-      elements.userStatusSelect.value = user.status;
+      document.getElementById('user-id').value = user.id;
+      document.getElementById('user-name').value = user.name;
+      document.getElementById('user-email').value = user.email;
+      document.getElementById('user-role').value = user.usertype;
+      document.getElementById('user-status').value = user.email_verified_at ? 'Active' : 'Blocked';
     } else {
       document.getElementById('modal-title').textContent = 'Add User';
     }
@@ -324,31 +330,37 @@ window.addEventListener('hashchange', handleNavigation);
 
   // Close Modal
   function closeModal() {
-    elements.userModal.classList.add('hidden');
+    const userModal = document.getElementById('user-modal');
+    userModal.classList.add('hidden');
   }
 
   // Save User
-  function saveUser(event) {
+  async function saveUser(event) {
     event.preventDefault();
 
-    const id = elements.userIdInput.value
-      ? parseInt(elements.userIdInput.value, 10)
-      : (state.users.length > 0 ? Math.max(...state.users.map(user => user.id)) + 1 : 1);
-    const name = elements.userNameInput.value;
-    const email = elements.userEmailInput.value;
-    const role = elements.userRoleInput.value;
-    const status = elements.userStatusSelect.value;
+    const userIdInput = document.getElementById('user-id');
+    const userNameInput = document.getElementById('user-name');
+    const userEmailInput = document.getElementById('user-email');
+    const userRoleInput = document.getElementById('user-role');
+    const userStatusSelect = document.getElementById('user-status');
 
-    if (elements.userIdInput.value) {
-      const userIndex = state.users.findIndex((user) => user.id === id);
-      if (userIndex > -1) {
-        state.users[userIndex] = { id, name, email, role, status };
-      }
-    } else {
-      state.users.push({ id, name, email, role, status });
-    }
+    const id = userIdInput.value ? parseInt(userIdInput.value, 10) : null;
+    const name = userNameInput.value;
+    const email = userEmailInput.value;
+    const usertype = userRoleInput.value;
+    const email_verified_at = userStatusSelect.value === 'Active' ? new Date().toISOString() : null;
 
-    renderUsers();
+    const user = { id, name, email, usertype, email_verified_at };
+    const method = id ? 'PUT' : 'POST';
+    const endpoint = id ? `/api/users/${id}` : '/api/users';
+
+    await fetch(endpoint, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user),
+    });
+
+    fetchUsers();
     closeModal();
   }
 
@@ -361,26 +373,142 @@ window.addEventListener('hashchange', handleNavigation);
   }
 
   // Block/Unblock User
-  function toggleBlockUser(userId) {
+  async function toggleBlockUser(userId) {
     const user = state.users.find((user) => user.id === userId);
     if (user) {
-      user.status = user.status === 'Active' ? 'Blocked' : 'Active';
-      renderUsers();
+      user.email_verified_at = user.email_verified_at ? null : new Date().toISOString();
+      await fetch(`/api/users/${userId}/toggle-block`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user),
+      });
     }
   }
 
   // Delete User
-  function deleteUser(userId) {
+  async function deleteUser(userId) {
     if (confirm('Are you sure you want to delete this user?')) {
-      state.users = state.users.filter((user) => user.id !== userId);
-      renderUsers();
+      await fetch(`/api/users/${userId}`, {
+        method: 'DELETE',
+      });
     }
   }
 
   // Initialize Manage Users
-  elements.addUserBtn.addEventListener('click', () => openModal());
-  elements.closeModalBtn.addEventListener('click', closeModal);
-  elements.userForm.addEventListener('submit', saveUser);
+  document.getElementById('add-user-btn').addEventListener('click', () => openModal());
+  document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+  document.getElementById('user-form').addEventListener('submit', saveUser);
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const issueStatusFilter = document.getElementById('issue-status-filter');
+    const addIssueBtn = document.getElementById('add-issue-btn');
+    const issuesTableBody = document.querySelector('.issues-table tbody');
+
+    // Fetch and render issues
+    function fetchIssues() {
+        fetch('/issues')
+            .then(response => response.json())
+            .then(issues => {
+                renderIssues(issues);
+            });
+    }
+
+    // Render issues in the table
+    function renderIssues(issues) {
+        issuesTableBody.innerHTML = '';
+        issues.forEach(issue => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${issue.id}</td>
+                <td>${issue.name}</td>
+                <td><img src="${issue.imagepath}" alt="${issue.name}" width="50"></td>
+                <td>${issue.publication_date}</td>
+                <td>${issue.status}</td>
+                <td class="actions">
+                    <button class="open-btn" data-id="${issue.id}">Reopen</button>
+                    <button class="close-btn" data-id="${issue.id}">Close</button>
+                    <button class="remove-btn" data-id="${issue.id}">Remove</button>
+                </td>
+            `;
+            issuesTableBody.appendChild(row);
+        });
+
+        addIssueActions();
+    }
+
+    // Add event listeners for issue actions
+    function addIssueActions() {
+        document.querySelectorAll('.open-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const issueId = button.dataset.id;
+                updateIssueStatus(issueId, 'Open');
+            });
+        });
+
+        document.querySelectorAll('.close-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const issueId = button.dataset.id;
+                updateIssueStatus(issueId, 'Closed');
+            });
+        });
+
+        document.querySelectorAll('.remove-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const issueId = button.dataset.id;
+                removeIssue(issueId);
+            });
+        });
+    }
+
+    // Update issue status
+    function updateIssueStatus(issueId, status) {
+        fetch(`/issues/${issueId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status }),
+        })
+        .then(response => response.json())
+        .then(updatedIssue => {
+            fetchIssues();
+        });
+    }
+
+    // Remove issue
+    function removeIssue(issueId) {
+        fetch(`/issues/${issueId}`, {
+            method: 'DELETE',
+        })
+        .then(() => {
+            fetchIssues();
+        });
+    }
+
+    // Add new issue
+    addIssueBtn.addEventListener('click', () => {
+        const name = prompt('Enter the name of the new issue:');
+        const publicationDate = prompt('Enter the publication date (YYYY-MM-DD):');
+        const status = prompt('Enter the status (Open/Closed):');
+
+        if (name && publicationDate && status) {
+            fetch('/issues', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, publication_date: publicationDate, status }),
+            })
+            .then(response => response.json())
+            .then(newIssue => {
+                fetchIssues();
+            });
+        }
+    });
+
+    // Initial fetch
+    fetchIssues();
+});
 
   // Initialize Application
   document.addEventListener('DOMContentLoaded', () => {
@@ -389,113 +517,7 @@ window.addEventListener('hashchange', handleNavigation);
     renderArticles();
     renderUsers();
     renderThemes();
-
-    window.addEventListener('hashchange', handleNavigation);
-
-    elements.themeFilter?.addEventListener('change', renderArticles);
-    elements.statusFilter?.addEventListener('change', renderArticles);
-    elements.themeStatusFilter?.addEventListener('change', renderThemes);
-  });
-
-
-
-  // Render Numbers in Table
-  function renderNumbers() {
-    const statusFilter = elements.numberStatusFilter.value;
-
-    const filteredNumbers = state.numbers.filter((number) =>
-      statusFilter === 'all' || number.status === statusFilter
-    );
-
-    elements.numbersTableBody.innerHTML = '';
-
-    filteredNumbers.forEach((number) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${number.id}</td>
-        <td>${number.title}</td>
-        <td>${number.date}</td>
-        <td>${number.status}</td>
-        <td class="actions">
-          <button class="publish-btn" data-id="${number.id}">Make Public</button>
-          <button class="private-btn" data-id="${number.id}">Make Private</button>
-          <button class="remove-btn" data-id="${number.id}">Remove</button>
-        </td>
-      `;
-      elements.numbersTableBody.appendChild(row);
-    });
-
-    addNumberActions();
-  }
-
-  // Add Event Listeners for Number Actions
-  function addNumberActions() {
-    document.querySelectorAll('.publish-btn').forEach((button) => {
-      button.addEventListener('click', () => {
-        const numberId = parseInt(button.dataset.id, 10);
-        changeNumberStatus(numberId, 'Public');
-      });
-    });
-
-    document.querySelectorAll('.private-btn').forEach((button) => {
-      button.addEventListener('click', () => {
-        const numberId = parseInt(button.dataset.id, 10);
-        changeNumberStatus(numberId, 'Private');
-      });
-    });
-
-    document.querySelectorAll('.remove-btn').forEach((button) => {
-      button.addEventListener('click', () => {
-        const numberId = parseInt(button.dataset.id, 10);
-        removeNumber(numberId);
-      });
-    });
-  }
-
-  // Change Number Status
-  function changeNumberStatus(numberId, status) {
-    const number = state.numbers.find((num) => num.id === numberId);
-    if (number) {
-      number.status = status;
-      alert(`Number "${number.title}" is now ${status}`);
-      renderNumbers();
-    }
-  }
-
-  // Remove Number
-  function removeNumber(numberId) {
-    if (confirm('Are you sure you want to remove this number?')) {
-      state.numbers = state.numbers.filter((num) => num.id !== numberId);
-      renderNumbers();
-      alert('Number removed successfully!');
-    }
-  }
-
-  // Add New Number
-  function addNumber() {
-    const newId = state.numbers.length > 0 ? Math.max(...state.numbers.map((num) => num.id)) + 1 : 1;
-    const title = prompt('Enter the title of the new number:');
-    const date = prompt('Enter the publication date (YYYY-MM-DD):');
-
-    if (title && date) {
-      state.numbers.push({ id: newId, title, date, status: 'Private' });
-      renderNumbers();
-      alert('New number added successfully!');
-    }
-  }
-
-  // Initialize Manage Numbers
-  elements.numberStatusFilter.addEventListener('change', renderNumbers);
-  elements.addNumberBtn.addEventListener('click', addNumber);
-
-  // Initialize Application
-  document.addEventListener('DOMContentLoaded', () => {
-    handleNavigation();
-    updateStatistics();
-    renderArticles();
-    renderUsers();
-    renderThemes();
-    renderNumbers();
+    renderIssues();
 
     window.addEventListener('hashchange', handleNavigation);
 

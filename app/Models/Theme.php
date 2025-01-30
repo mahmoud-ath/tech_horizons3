@@ -8,10 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Theme extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'description', 'imagepath','user_id','status'];
+    protected $fillable = ['name', 'description', 'imagepath', 'user_id', 'status'];
 
-public function subscriptions()
-{
-    return $this->hasMany(Subscription::class);
-}
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
 }
