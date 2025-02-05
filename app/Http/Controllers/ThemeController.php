@@ -10,11 +10,7 @@ class ThemeController extends Controller
     public function index()
     {
         $themes = Theme::all();
-        return view('themes', compact('themes'));
+        return view('gestion des articles.themes', compact('themes'));
     }
-    public function show(Theme $theme)
-    {
-        $articles = $theme->articles()->get();
-        return view('themes.show', compact('theme', 'articles'));
-    }
+
 }

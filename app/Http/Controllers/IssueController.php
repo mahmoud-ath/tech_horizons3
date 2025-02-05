@@ -11,20 +11,20 @@ class IssueController extends Controller
     public function index()
     {
         $issues = Issues::all();
-        return view('firstpage', compact('issues'));
+        return view('accueil.firstpage', compact('issues'));
     }
 
     public function showArticlesByIssue($issue_id)
     {
         $issue = Issues::findOrFail($issue_id);
         $articles = Article::where('issue_id', $issue_id)->get();
-        return view('numbers', compact('issue', 'articles'));
+        return view('gestion des articles.numbers', compact('issue', 'articles'));
     }
 
     public function showArticle($issue_id, $article_id)
     {
         $issue = Issues::findOrFail($issue_id);
         $article = Article::where('id', $article_id)->where('issue_id', $issue_id)->firstOrFail();
-        return view('article', compact('issue', 'article'));
+        return view('gestion des articles.article', compact('issue', 'article'));
     }
 }

@@ -26,25 +26,31 @@ use App\Http\Controllers\ResponsableDashboardController;
 
 Route::get('/user/dashboarduser', [UserController::class, 'index'])->middleware('auth');
 
+//route accueil
 Route::get('/', [IssueController::class, 'index'])->name('/.index');
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/home', [HomeController::class, 'index']);
-
-Route::get('/themes', [ThemeController::class, 'index'])->name('themes.index');
+//a-propos
 Route::get('/a_propos', function () {
-    return view('a_propos');
+    return view('accueil.a_propos');
 });
+//contact us
 Route::get('/contact_us', function () {
-    return view('contact_us');
+    return view('accueil.contact_us');
 });
+//after login
+Route::get('/home', [HomeController::class, 'index']);
+// Default Breeze routes (login, registration, etc.)
+require __DIR__.'/auth.php';
 
 
 
+
+// gestion  des articles
+// themes
+Route::get('/themes', [ThemeController::class, 'index'])->name('themes.index');
+
+//page articles d'un nombre
 Route::get('/numbers/{issue_id}', [IssueController::class, 'showArticlesByIssue'])->name('issue.articles')->middleware('auth.custom');
+//page article d'un nombre
 Route::get('/numbers/{issue_id}/{article_id}', [IssueController::class, 'showArticle'])->name('issue.article')->middleware('auth.custom');
 
 
@@ -56,34 +62,30 @@ Route::get('/themes/{themeId}/articles/{articleId}', [ArticleController::class, 
 
 
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-Route::get('/user', [userController::class, 'index'])->name('user.dashboard');
-Route::post('/toggle-subscription', [userController::class, 'toggleSubscription'])->name('user.toggleSubscription');
 
-// Default Breeze routes (login, registration, etc.)
-require __DIR__.'/auth.php';
-
-// Admin routes (restricted to admin users)
+// responsable
 
 Route::middleware(['auth', 'moderator'])->group(function () {
     Route::match(['get', 'post'], '/respo/moderatorhome', [ResponsableDashboardController::class, 'showDashboard'])->name('moderatorhome');
 });
-//Route::get('/', [HomeController::class, 'index'])->name('home');
 
 
 
+
+
+//admin
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::match(['get', 'post'], '/admin/adminhome', [AdminDashboardController::class, 'admin'])->name('adminhome');
     Route::post('/api/users', [AdminDashboardController::class, 'admin']);
     Route::put('/api/users/{id}', [AdminDashboardController::class, 'updateUser']);
     Route::post('/api/users/{id}/toggle-block', [AdminDashboardController::class, 'toggleUserStatus'])->name('admin.users.toggle');
     Route::delete('/api/users/{id}', [AdminDashboardController::class, 'deleteUser'])->name('admin.users.delete');
-
+    //
+    Route::get('/articles', [AdminDashboardController::class, 'index']);
+    Route::post('/articles/update', [AdminDashboardController::class, 'update']);
+    Route::post('/articles/delete', [AdminDashboardController::class, 'delete']);
+    Route::post('/articles/filter', [AdminDashboardController::class, 'filter']);
     // Theme management routes
     Route::post('/api/themes', [AdminDashboardController::class, 'storeTheme']);
     Route::put('/api/themes/{id}', [AdminDashboardController::class, 'updateTheme']);
@@ -101,7 +103,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 
 
-
+//user
 Route::get('/user/dashboarduser', [UserController::class, 'dashboard'])->name('user.dashboarduser');
 Route::get('/user/subscription', [UserController::class, 'subscription'])->name('user.subscription');
 Route::get('/user/my-articles', [UserController::class, 'myArticles'])->name('user.myArticle');
@@ -109,16 +111,29 @@ Route::get('/user/browsing-history', [UserController::class, 'browsingHistory'])
 Route::get('/user/settings', [UserController::class, 'settings'])->name('user.settings');
 Route::get('/user/proposearticle', [UserController::class, 'proposeArticle'])->name('user.proposearticle');
 
+/*
+//TEST A VERIFIE
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/user', [userController::class, 'index'])->name('user.dashboard');
+Route::post('/toggle-subscription', [userController::class, 'toggleSubscription'])->name('user.toggleSubscription');
+
+
+
+
+
 // Other routes...
 
 Route::get('/user/dashboard', [UserController::class, 'index'])->middleware('auth');
 Route::get('/dashboard', [UserController::class, 'dashboard'])->middleware('auth');
 Route::post('/toggle-subscription', [UserController::class, 'toggleSubscription']);
 
-
-
-
-
-
-
-
+*/

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Tech Horizons</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 </head>
 <body>
@@ -117,19 +118,19 @@
             <h2>Manage Articles</h2>
             <div class="articles-controls">
                 <label for="theme-filter">Filter by Theme:</label>
-                <select id="theme-filter" name="theme">
-                    <option value="all">All Themes</option>
-                    <option value="Intelligence Artificielle">Intelligence Artificielle</option>
-                    <option value="Internet des Objets">Internet des Objets</option>
-                    <option value="Cybersécurité">Cybersécurité</option>
-                    <option value="Réalité Virtuelle">Réalité Virtuelle</option>
-                </select>
-                <label for="status-filter">Filter by Status:</label>
-                <select id="status-filter" name="status">
-                    <option value="all">All Statuses</option>
-                    <option value="Published">Published</option>
-                    <option value="Pending">Pending</option>
-                </select>
+                <select id="themeFilter">
+    <option value="all">All Themes</option>
+    @foreach ($themes as $theme)
+        <option value="{{ $theme }}">{{ $theme }}</option>
+    @endforeach
+</select>
+<label for="status-filter">Filter by Status:</label>
+
+<select id="statusFilter">
+    <option value="all">All Statuses</option>
+    <option value="Published">Published</option>
+    <option value="Pending">Pending</option>
+</select>
             </div>
 
             <table class="articles-table">
@@ -142,19 +143,21 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="articles-body">
-                    @foreach($articles as $article)
-                    <tr>
-                        <td>{{ $article->title }}</td>
-                        <td>{{ $article->theme->name }}</td> <!-- Assuming you have a relation defined for theme -->
-                        <td>{{ $article->published_date }}</td>
-                        <td>{{ $article->status }}</td>
-                        <td>
-                            <!-- Actions like edit, delete -->
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
+                <tbody id="articlesTableBody">
+        @foreach ($articles as $article)
+            <tr data-id="{{ $article->id }}">
+                <td>{{ $article->title }}</td>
+                <td>{{ $article->theme->name }}</td>
+                <td>{{ $article->published_date }}</td>
+                <td class="status">{{ $article->status }}</td>
+                <td class="actions">
+                    <button class="activate-btn {{ $article->status === 'Published' ? 'hidden' : '' }}" data-id="{{ $article->id }}">Activate</button>
+                    <button class="deactivate-btn {{ $article->status === 'Pending' ? 'hidden' : '' }}" data-id="{{ $article->id }}">Deactivate</button>
+                    <button class="remove-btn" data-id="{{ $article->id }}">Remove</button>
+                </td>
+            </tr>
+        @endforeach
+    </tbody>
             </table>
         </section>
 
@@ -445,5 +448,6 @@
 
 
     <script src="{{ asset('js/admin.js') }}"></script>
+    <script src="{{ asset('js/adminarticle.js') }}"></script>
 </body>
 </html>

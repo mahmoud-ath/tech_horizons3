@@ -191,4 +191,44 @@ class AdminDashboardController extends Controller
         $issues = Issues::all();
         return response()->json($issues);
     }
+
+
+
+    public function update(Request $request) {
+        $article = Article::find($request->id);
+        if ($article) {
+            $article->status = $request->status;
+            $article->save();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false]);
+    }
+
+    public function delete(Request $request) {
+        $article = Article::find($request->id);
+        if ($article) {
+            $article->delete();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false]);
+    }
+
+    public function filter(Request $request) {
+        $query = Article::query();
+
+        if ($request->theme->name !== 'all') {
+            $query->where('theme', $request->theme->name);
+        }
+
+        if ($request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        $articles = $query->get();
+
+        return response()->json(['articles' => $articles]);
+    }
+
 }
+
+
