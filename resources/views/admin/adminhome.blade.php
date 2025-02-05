@@ -112,54 +112,57 @@
 
         <!-- Manage Articles Section -->
 
+<!-- Manage Articles Section -->
+<section id="manage-articles">
+    <h2>Manage Articles</h2>
+    <div class="articles-controls">
+        <label for="themeFilter">Filter by Theme:</label>
+        <select id="themeFilter">
+            <option value="all">All Themes</option>
+            @foreach ($themes as $theme)
+                <option value="{{ $theme->id }}">{{ $theme->name }}</option>
+            @endforeach
+        </select>
 
-        <!-- Manage Articles Section -->
-        <section id="manage-articles">
-            <h2>Manage Articles</h2>
-            <div class="articles-controls">
-                <label for="theme-filter">Filter by Theme:</label>
-                <select id="themeFilter">
-    <option value="all">All Themes</option>
-    @foreach ($themes as $theme)
-        <option value="{{ $theme }}">{{ $theme }}</option>
-    @endforeach
-</select>
-<label for="status-filter">Filter by Status:</label>
+        <label for="statusFilter">Filter by Status:</label>
+        <select id="statusFilter">
+            <option value="all">All Statuses</option>
+            <option value="published">Published</option>
+            <option value="pending">Pending</option>
+        </select>
+    </div>
 
-<select id="statusFilter">
-    <option value="all">All Statuses</option>
-    <option value="Published">Published</option>
-    <option value="Pending">Pending</option>
-</select>
-            </div>
-
-            <table class="articles-table">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Theme</th>
-                        <th>Published Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="articlesTableBody">
-        @foreach ($articles as $article)
-            <tr data-id="{{ $article->id }}">
-                <td>{{ $article->title }}</td>
-                <td>{{ $article->theme->name }}</td>
-                <td>{{ $article->published_date }}</td>
-                <td class="status">{{ $article->status }}</td>
-                <td class="actions">
-                    <button class="activate-btn {{ $article->status === 'Published' ? 'hidden' : '' }}" data-id="{{ $article->id }}">Activate</button>
-                    <button class="deactivate-btn {{ $article->status === 'Pending' ? 'hidden' : '' }}" data-id="{{ $article->id }}">Deactivate</button>
-                    <button class="remove-btn" data-id="{{ $article->id }}">Remove</button>
-                </td>
+    <table class="articles-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Theme</th>
+                <th>Published Date</th>
+                <th>Status</th>
+                <th>Actions</th>
             </tr>
-        @endforeach
-    </tbody>
-            </table>
-        </section>
+        </thead>
+        <tbody id="articlesTableBody">
+            @foreach ($articles as $article)
+                <tr data-id="{{ $article->id }}" data-theme="{{ $article->theme->id }}" data-status="{{ $article->status }}">
+                    <td>{{ $article->title }}</td>
+                    <td>{{ $article->theme->name }}</td>
+                    <td>{{ $article->published_date }}</td>
+                    <td class="status">{{ $article->status }}</td>
+                    <td class="actions">
+                        <button class="activate-btn {{ $article->status === 'published' ? 'hidden' : '' }}" data-id="{{ $article->id }}">Activate</button>
+                        <button class="deactivate-btn {{ $article->status === 'pending' ? 'hidden' : '' }}" data-id="{{ $article->id }}">Deactivate</button>
+                        <button class="remove-btn" data-id="{{ $article->id }}">Remove</button>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</section>
+
+
+
+
 
         <!-- Create Article Section -->
 
@@ -361,9 +364,9 @@
                 @if(!empty($themes))
                 @foreach($themes as $theme)
                 <tr>
-                    <td>{{ $theme->id }}</td>
                     <td>{{ $theme->name }}</td>
-                    <td>{{ $theme->responsible }}</td>
+                    <td>{{ $theme->user->name }}</td>
+                    <td>{{ $theme->articles_count }}</td>
                     <td>{{ $theme->status }}</td>
                 </tr>
             @endforeach
@@ -423,27 +426,37 @@
 
     <section id="settings">
         <h2>Settings</h2>
-        <p>Current Username: <span id="current-username">{{ auth()->user()->username }}</span></p>
-        <div id="profile-image-preview">
-          <img src="{{ auth()->user()->profile_image ? asset('storage/' . auth()->user()->profile_image) : '/default-profile.png' }}" class="admin-img" alt="Profile Image" />
-        </div>
-        <form id="settings-form">
-          @csrf
-          <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" id="username" placeholder="Enter new username" required value="{{ auth()->user()->username }}" />
-          </div>
-          <div class="form-group">
-            <label for="password">New Password:</label>
-            <input type="password" id="password" placeholder="Enter new password" />
-          </div>
-          <div class="form-group">
-            <label for="profile-image">Profile Image:</label>
-            <input type="file" id="profile-image" accept="image/*" />
-          </div>
-          <button type="submit" id="save-settings-btn">Save Changes</button>
+
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <form id="settings-form" action="{{ route('admin.updateSettings') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="form-group">
+                <label for="user_name">Username:</label>
+                <input type="text" name="user_name" id="user_name" placeholder="Enter new username" required value="{{ auth()->user()->user_name }}" />
+            </div>
+            <div class="form-group">
+                <label for="password">New Password:</label>
+                <input type="password" name="password" id="password" placeholder="Enter new password" />
+            </div>
+            <div class="form-group">
+                <label for="profile-image">Profile Image:</label>
+                <input type="file" name="profile_image" id="profile-image" accept="image/*" />
+            </div>
+            <button type="submit" id="save-settings-btn">Save Changes</button>
         </form>
-      </section>
+    </section>
+
 
 
 

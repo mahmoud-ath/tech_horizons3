@@ -43,4 +43,8 @@ class User extends Authenticatable
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+    public function themes() {
+        return $this->hasMany(Theme::class);
+    }
+
 }

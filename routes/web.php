@@ -85,8 +85,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/articles', [AdminDashboardController::class, 'index']);
     Route::post('/articles/update', [AdminDashboardController::class, 'update']);
     Route::post('/articles/delete', [AdminDashboardController::class, 'delete']);
-    Route::post('/articles/filter', [AdminDashboardController::class, 'filter']);
     // Theme management routes
+
     Route::post('/api/themes', [AdminDashboardController::class, 'storeTheme']);
     Route::put('/api/themes/{id}', [AdminDashboardController::class, 'updateTheme']);
     Route::delete('/api/themes/{id}', [AdminDashboardController::class, 'deleteTheme']);
@@ -96,6 +96,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/api/issues', [AdminDashboardController::class, 'storeIssue']);
     Route::put('/api/issues/{id}/status', [AdminDashboardController::class, 'updateIssueStatus']);
     Route::delete('/api/issues/{id}', [AdminDashboardController::class, 'deleteIssue']);
+    //settings
+    Route::post('/admin/update-settings', [AdminDashboardController::class, 'updateSettings'])->name('admin.updateSettings');
 });
 
 

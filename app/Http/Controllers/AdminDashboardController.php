@@ -212,22 +212,43 @@ class AdminDashboardController extends Controller
         }
         return response()->json(['success' => false]);
     }
+    public function updateSettings(Request $request)
+    {
+        try {
+            $user = Auth::user();
 
-    public function filter(Request $request) {
-        $query = Article::query();
+            $request->validate([
+                'user_name' => 'required|string|max:255',
+                'password' => 'nullable|string|min:8|confirmed',
+                'profile_image' => 'nullable|image|max:2048',
+            ]);
 
-        if ($request->theme->name !== 'all') {
-            $query->where('theme', $request->theme->name);
+            // Update username
+            $user->user_name = $request->user_name;
+
+            // Update password if provided
+            if ($request->filled('password')) {
+                $user->password = Hash::make($request->password);
+            }
+
+            // Update profile image if provided
+            if ($request->hasFile('profile_image')) {
+                $imagePath = $request->file('profile_image')->store('profile_images', 'public');
+                $user->user_image = $imagePath;
+            }
+
+            $user->save();
+
+            return redirect()->back()->with('success', 'Settings updated successfully.');
+
+        } catch (\Exception $e) {
+            // Log the error message
+            \Log::error('Error updating settings: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'An error occurred while updating settings. Please try again.');
         }
-
-        if ($request->status !== 'all') {
-            $query->where('status', $request->status);
-        }
-
-        $articles = $query->get();
-
-        return response()->json(['articles' => $articles]);
     }
+
 
 }
 
