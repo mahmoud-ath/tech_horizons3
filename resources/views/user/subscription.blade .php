@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>user Dashboard</title>
     <link rel="stylesheet" href="{{ asset('css/user.css') }}"></head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
+<!-- Sidebar -->
+<div class="sidebar">
         <div class="sidebar-header">
-        <img src="{{ asset($user->user_image ?? 'images/default-profile.png') }}" alt="User Profile" class="user-img" id="user-img" />
+        <img id="admin-img" src="{{ asset('storage/profiles/' . auth()->user()->user_image) }}" alt="Profil" width="100">
         </div>
         <ul class="sidebar-menu">
         <li><a href="{{ route('user.dashboarduser') }}" data-section="dashboard" class="menu-link active">Dashboard</a></li>
@@ -24,17 +24,16 @@
     <!-- Main Content Area -->
     <div class="main-content">
         <div class="header-info">
-            <span>Welcome back, @if(isset($user))
-            <span id="admin-username" style="font-weight: 900;">{{ Auth::user()->username ?? 'Guest' }}</span>
-@else
-    <span id="admin-username" style="font-weight: 900;">{{ Auth::user()->name }}</span>
-@endif </span>
+            <span>Welcome back, 
+             <span id="admin-username" style="font-weight: 900;">{{ auth()->user()->name }}</span> </span>
+            
 <button id="theme-btn-header" action="{{ route('themes.index') }}" >Themes</button>
             <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                    @csrf
-                    <button type="submit" id="logout-btn">Logout</button>
+                @csrf
+                <button type="submit" id="logout-btn">Logout</button>
             </form>
         </div>
+
 
         <!-- Sections -->
         <section id="subscription">

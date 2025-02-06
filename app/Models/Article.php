@@ -34,7 +34,7 @@ class Article extends Model
     }
     public function issue()
     {
-    return $this->belongsTo(Issue::class, 'issue_id');
+    return $this->belongsTo(Issues::class, 'issue_id');
     }
 
 

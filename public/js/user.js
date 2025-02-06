@@ -23,11 +23,7 @@ function setupEventListeners() {
         link.addEventListener('click', handleSidebarNavigation);
     });
 
-    // Settings form submission
-    const settingsForm = document.getElementById('settings-form');
-    if (settingsForm) {
-        settingsForm.addEventListener('submit', handleSettingsFormSubmit);
-    }
+       
 
     // Subscription button
     const saveSubscriptionBtn = document.getElementById('save-subscription-btn');
@@ -35,11 +31,7 @@ function setupEventListeners() {
         saveSubscriptionBtn.addEventListener('click', handleSubscriptionSave);
     }
 
-    // Article form submission
-    const articleForm = document.getElementById('article-form');
-    if (articleForm) {
-        articleForm.addEventListener('submit', handleArticleFormSubmit);
-    }
+   
 
     // Filter browsing history
     document.getElementById('filter-keyword')?.addEventListener('input', filterHistory);
@@ -82,28 +74,12 @@ function handleSidebarNavigation(event) {
     event.target.classList.add('active');
 }
 
-// Function to handle settings form submission
-function handleSettingsFormSubmit(event) {
-    event.preventDefault();
 
-    // Get the new username and profile image
-    const newUsername = document.getElementById('username').value;
-    const profileImage = document.getElementById('profile-image').files[0];
 
-    // Update the username
-    if (newUsername) {
-        document.getElementById('admin-username').textContent = newUsername;
-    }
 
-    // Update the profile image if one is selected
-    if (profileImage) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            document.getElementById('admin-img').src = e.target.result;
-        };
-        reader.readAsDataURL(profileImage);
-    }
-}
+
+
+
 
 // Function to handle subscription save
 function handleSubscriptionSave() {
@@ -120,32 +96,6 @@ function handleSubscriptionSave() {
 
     // Display the selected themes (replace with actual logic for saving the subscription)
     alert('Subscribed to: ' + selectedThemes.join(', '));
-}
-
-// Function to handle article form submission
-function handleArticleFormSubmit(event) {
-    event.preventDefault();
-
-    // Get form data
-    const title = document.getElementById('article-title').value;
-    const themes = Array.from(document.getElementById('article-themes').selectedOptions).map(option => option.value);
-    const cover = document.getElementById('article-cover').files[0];
-    const description = document.getElementById('article-description').value;
-
-    // Create a new article object
-    const newArticle = {
-        title: title,
-        themes: themes,
-        cover: cover ? URL.createObjectURL(cover) : null,
-        description: description,
-        status: 'En cours'
-    };
-
-    // Add the new article to the list (display it in the table)
-    displayArticle(newArticle);
-
-    // Reset the form
-    event.target.reset();
 }
 
 // Function to display an article in the table

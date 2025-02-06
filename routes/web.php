@@ -11,6 +11,9 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\ResponsableDashboardController;
+use App\Http\Controllers\UserProposalController;
+use App\Http\Controllers\UserSettingsController;
+
 
 
 /*
@@ -110,8 +113,16 @@ Route::get('/user/dashboarduser', [UserController::class, 'dashboard'])->name('u
 Route::get('/user/subscription', [UserController::class, 'subscription'])->name('user.subscription');
 Route::get('/user/my-articles', [UserController::class, 'myArticles'])->name('user.myArticle');
 Route::get('/user/browsing-history', [UserController::class, 'browsingHistory'])->name('user.browsing-history');
+// Route to handle the user settings update
+Route::PUT('/settings/update', [UserSettingsController::class, 'update'])->name('user.settings.update');
 Route::get('/user/settings', [UserController::class, 'settings'])->name('user.settings');
-Route::get('/user/proposearticle', [UserController::class, 'proposeArticle'])->name('user.proposearticle');
+
+// Route to handle the user article proposal
+Route::get('/user/proposearticle', [UserController::class, 'showProposalForm'])->name('user.proposearticle');
+Route::post('/submit-article', [UserProposalController::class, 'submitArticle'])->name('submit-article');
+
+
+
 
 /*
 //TEST A VERIFIE

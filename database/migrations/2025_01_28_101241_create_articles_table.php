@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreign('theme_id')->references('id')->on('themes')->onDelete('cascade');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->enum('status', ['pending', 'approved', 'published', 'rejected']);
+            $table->enum('status', ['pending', 'approved', 'published', 'rejected'])->default('pending');
             $table->date('published_date')->nullable();
             $table->timestamps();
         });

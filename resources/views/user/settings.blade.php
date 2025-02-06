@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>user Dashboard</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/user.css') }}"></head>
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-        <img src="{{ asset($user->user_image ?? 'images/default-profile.png') }}" alt="User Profile" class="user-img" id="user-img" />
+        <img id="admin-img" src="{{ asset('storage/profiles/' . auth()->user()->user_image) }}" alt="Profil" width="100">
         </div>
         <ul class="sidebar-menu">
         <li><a href="{{ route('user.dashboarduser') }}" data-section="dashboard" class="menu-link active">Dashboard</a></li>
@@ -24,11 +25,9 @@
     <!-- Main Content Area -->
     <div class="main-content">
         <div class="header-info">
-            <span>Welcome back, @if(isset($user))
-            <span id="admin-username" style="font-weight: 900;">{{ Auth::user()->username ?? 'Guest' }}</span>
-@else
-    <span id="admin-username" style="font-weight: 900;">{{ Auth::user()->name }}</span>
-@endif </span>
+            <span>Welcome back, 
+             <span id="admin-username" style="font-weight: 900;">{{ auth()->user()->name }}</span> </span>
+            
 <button id="theme-btn-header" action="{{ route('themes.index') }}" >Themes</button>
             <form method="POST" action="{{ route('logout') }}" class="d-inline">
                 @csrf
@@ -39,40 +38,35 @@
         <!-- Sections -->
 
         <section id="settings" class="settings-section">
-            <h2 class="settings-title">Settings</h2>
-            <form id="settings-form" class="settings-form">
-              <div class="settings-form-group">
-                <label for="username" class="settings-label">Username:</label>
-                <input type="text" id="username" class="settings-input" placeholder="Enter new username" required />
-              </div>
-              <div class="settings-form-group">
-                <label for="password" class="settings-label">New Password:</label>
-                <input type="password" id="password" class="settings-input" placeholder="Enter new password" />
-              </div>
-              <div class="settings-form-group">
-                <label for="profile-image" class="settings-label">Profile Image:</label>
-                <input type="file" id="profile-image" class="settings-file-input" accept="image/*" />
-              </div>
-              <button type="submit" id="save-settings-btn" class="settings-submit-btn">Save Changes</button>
-            </form>
-          </section>
+    <h2 class="settings-title">Settings</h2>
+    <form id="settings-form" class="settings-form" method="POST" action="{{ route('user.settings.update') }}" enctype="multipart/form-data">
+    @csrf
+    @method('PUT')
+    <div class="settings-form-group">
+        <label for="username" class="settings-label">Nom d'utilisateur :</label>
+        <input type="text" name="username" id="username" class="settings-input" placeholder="Entrez votre nouveau nom" required value="{{ auth()->user()->name }}" />
+    </div>
+
+    <div class="settings-form-group">
+        <label for="password" class="settings-label">Nouveau mot de passe :</label>
+        <input type="password" name="password" id="password" class="settings-input" placeholder="Entrez un nouveau mot de passe" />
+    </div>
+
+    <div class="settings-form-group">
+        <label for="user_image" class="settings-label">Image de profil :</label>
+        <input type="file" name="user_image" id="user_image" class="settings-file-input" accept="image/*" />
+    </div>
+
+    <button type="submit" class="settings-submit-btn">Enregistrer les modifications</button>
+</form>
+
+</section>
 
 
     </div>
-    <script src="{{ asset('js/user.js') }}"></script>
-    <script>
-        function toggleSubscription(theme) {
-            fetch('/admin/toggle-subscription', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({theme: theme})
-            }).then(response => response.json()).then(data => {
-                // Handle the response here
-            });
-        }
-    </script>
+   <!-- <script src="{{ asset('js/user.js') }}"></script> -->
+    <script src="{{ asset('js/userSetting.js') }}"></script>
+
+   
 </body>
 </html>

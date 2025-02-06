@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>user Dashboard</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/user.css') }}"></head>
 <body>
-    <!-- Sidebar -->
+<!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-        <img src="{{ asset($user->user_image ?? 'images/default-profile.png') }}" alt="User Profile" class="user-img" id="user-img" />
+        <img id="admin-img" src="{{ asset('storage/profiles/' . auth()->user()->user_image) }}" alt="Profil" width="100">
         </div>
         <ul class="sidebar-menu">
         <li><a href="{{ route('user.dashboarduser') }}" data-section="dashboard" class="menu-link active">Dashboard</a></li>
@@ -21,53 +22,62 @@
         </ul>
     </div>
 
-    <section id="propose-article">
-                <h1>Propose un Article</h1>
-                <form id="article-form" method="POST" action="{{ url('/submit-article') }}" enctype="multipart/form-data">
-                    @csrf
-                    <div class="form-group">
-                        <label for="article-title">Titre de l'article</label>
-                        <input type="text" id="article-title" name="title" placeholder="Titre de l'article" required>
-                    </div>
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="header-info">
+            <span>Welcome back, 
+             <span id="admin-username" style="font-weight: 900;">{{ auth()->user()->name }}</span> </span>
+            
+<button id="theme-btn-header" action="{{ route('themes.index') }}" >Themes</button>
+            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                @csrf
+                <button type="submit" id="logout-btn">Logout</button>
+            </form>
+        </div>
 
-                    <div class="form-group">
-                        <label for="article-themes">Thèmes de l'article</label>
-                        <select id="article-themes" name="theme_id" multiple required>
-                            @foreach($themes as $theme)
-                                <option value="{{ $theme->id }}">{{ $theme->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="article-cover">Image de couverture</label>
-                        <input type="file" id="article-cover" name="cover_image" accept="image/*" required>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="article-description">Description de l'article</label>
-                        <textarea id="article-description" name="description" rows="4" placeholder="Description de l'article" required></textarea>
-                    </div>
 
-                    <button type="submit" id="submit-article-btn">Proposer l'article</button>
-                </form>
-            </section>
+        <section id="propose-article">
+    <h1>Propose un Article</h1>
+    <form id="article-form" method="POST" action="{{ route('submit-article') }}" enctype="multipart/form-data">
+        @csrf
+        <div class="form-group">
+            <label for="article-title">Titre de l'article</label>
+            <input type="text" id="article-title" name="title" placeholder="Titre de l'article" required>
+        </div>
+
+        <div class="form-group">
+            <label for="article-themes">Thèmes de l'article</label>
+            <select id="article-themes" name="theme_id[]" multiple required>
+                @foreach($themes as $theme)
+                    <option value="{{ $theme->id }}">{{ $theme->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="article-cover">Image de couverture</label>
+            <input type="file" id="article-cover" name="cover_image" accept="image/*" required>
+        </div>
+
+        <div class="form-group">
+            <label for="article-description">Description de l'article</label>
+            <textarea id="article-description" name="description" rows="4" placeholder="Description de l'article" required></textarea>
+        </div>
+
+        <button type="submit" id="submit-article-btn">Proposer l'article</button>
+    </form>
+   
+
+</section>
+
+
+
 
     </div>
-    <script src="{{ asset('js/user.js') }}"></script>
-    <script>
-        function toggleSubscription(theme) {
-            fetch('/admin/toggle-subscription', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({theme: theme})
-            }).then(response => response.json()).then(data => {
-                // Handle the response here
-            });
-        }
-    </script>
+<!-- <script src="{{ asset('js/user.js') }}"></script> -->
+    <script src="{{ asset('js/userProposal.js') }}"></script>
+
 </body>
 </html>

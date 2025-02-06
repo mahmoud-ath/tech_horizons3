@@ -23,9 +23,9 @@ class AdminDashboardController extends Controller
             $article->status = $request->status;
             $article->content = $request->content;
 
-            if ($request->hasFile('cover_image')) {
-                $file = $request->file('cover_image');
-                $filePath = $file->store('covers', 'public');
+            if ($request->hasFile('imagepath')) {
+                $file = $request->file('imagepath');
+                $filePath = $file->store('article_images', 'public');
                 $article->imagepath = $filePath;
             }
 
